@@ -3,9 +3,10 @@
 An example of a Spring Boot Kafka consumer application ~~with non-blocking retry~~ (not yet implemented). 
 
 ## The main logic
-1. @KafkaListener annotated method receives a String message from the ***main*** Kafka topic;
-2. Application tries to process this String message (trims payload if its length > 5 symbols). If processing succeeds, then app prints the result in logs.
-   
+1. @KafkaListener annotated method receives a String message from the ***main*** Kafka topic.
+2. Application tries to process this String message (trim payload if its length > 5 symbols) using a method that could throw an exception (you can set up error possibility in [application.properties](src/main/resources/application.properties)). Possible cases: 
+   - **app prints the result in logs** if processing succeeds;
+   - **otherwise, the default Spring logic triggers**. If @KafkaListener annotated method throws any exception, DefaultErrorHandler seeks consumer to the current offset to reprocess the failed record. There are 9 retries at all and each one blocks receiving of other messages from the main topic.
 ## Integration tests
 - Integration tests for Kafka logic use almost the same configuration as a real-time running application would have. 
 - These tests are executing rather quickly. Because they create only the context that is necessary for testing Kafka functionality.

@@ -19,7 +19,7 @@ public class KafkaConsumer {
     String recordDetails = getRecordDetails(consumerRecord);
     log.info("Message received ({}). Payload: \"{}\"", recordDetails, consumerRecord.value());
 
-    String processedMsg = processingService.truncateMessage(consumerRecord.value());
+    String processedMsg = processingService.truncateMessageInRiskyWay(consumerRecord.value());
     log.info("Message successfully processed ({}). Result: \"{}\"", recordDetails, processedMsg);
   }
 
