@@ -7,6 +7,7 @@ services:
       - "12181:2181"
     networks:
       - spring-kafka-retry
+    restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
@@ -20,7 +21,7 @@ services:
       - spring-kafka-retry
     depends_on:
       - zookeeper
-    restart: on-failure
+    restart: unless-stopped
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: 'retry-example-zookeeper:2181'

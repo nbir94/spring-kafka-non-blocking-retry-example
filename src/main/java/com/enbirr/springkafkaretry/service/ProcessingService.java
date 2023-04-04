@@ -23,7 +23,7 @@ public class ProcessingService {
     if (chanceOfSuccess > errorPercentage) {
       return truncateMessage(message);
     } else {
-      throw new ProcessingException();
+      throw new ProcessingException("Failed to process the message");
     }
   }
 
