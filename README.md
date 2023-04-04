@@ -8,6 +8,7 @@ An example of a Spring Boot Kafka consumer application with non-blocking retry.
     - **app prints the result in logs** if processing succeeds;
     - **app sends failed record to retry topic** if @KafkaListener annotated method throws an exception. After delayed time, this method will attempt to process failed record again from a retry topic (see the first step);
     - **app sends failed record to DLQ topic** (dead letter queue) if it has exhausted all attempts to process this record.
+    - **app sends failed record to DLQ topic without retries** if specific fatal exception was thrown.
 
 ## Retry logic details
 - **Retry mechanism in this example doesn't block receiving of messages from the main topic.** If we didn't configure the retry logic in any way, by default Spring would make 9 retries to process the message using the DefaultErrorHandler. It seeks consumer to the current offset again and again, so it blocks receiving messages from the main topic.

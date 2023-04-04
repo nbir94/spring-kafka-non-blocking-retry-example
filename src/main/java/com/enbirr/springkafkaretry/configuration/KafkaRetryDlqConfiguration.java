@@ -3,6 +3,7 @@ package com.enbirr.springkafkaretry.configuration;
 
 import static com.enbirr.springkafkaretry.constants.LogAndExceptionMessages.SETTING_UP_RETRY_TOPIC;
 
+import com.enbirr.springkafkaretry.exception.ProcessingFatalException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -46,6 +47,7 @@ public class KafkaRetryDlqConfiguration extends RetryTopicConfigurationSupport {
         .newInstance()
         .maxAttempts(attemptsMaxCount)
         .fixedBackOff(attemptsIntervalMs)
+        .notRetryOn(ProcessingFatalException.class)
         // sets up single topic usage for all retries
         .useSingleTopicForSameIntervals()
         .retryTopicSuffix(kafkaProperties.getRetryTopicSuffix())

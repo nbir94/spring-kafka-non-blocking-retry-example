@@ -17,6 +17,7 @@ import com.enbirr.springkafkaretry.configuration.KafkaCustomProperties;
 import com.enbirr.springkafkaretry.configuration.KafkaRetryDlqConfiguration;
 import com.enbirr.springkafkaretry.configuration.KafkaTestConfiguration;
 import com.enbirr.springkafkaretry.exception.ProcessingException;
+import com.enbirr.springkafkaretry.exception.ProcessingFatalException;
 import com.enbirr.springkafkaretry.service.ProcessingService;
 import lombok.SneakyThrows;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -88,6 +89,23 @@ class KafkaConsumerIntegrationTest {
     waitAndVerifyDlqRecord(incomingMessage);
 
     verify(processingServiceMock, times(kafkaProperties.getAttemptsMaxCount()))
+        .truncateMessageInRiskyWay(incomingMessage);
+  }
+
+  @Test
+  @SneakyThrows
+  void givenFatalException_whenItIsThrown_thenMessageComesToDlqWithoutRetry() {
+    // GIVEN
+    String incomingMessage = "any unprocessable message";
+    when(processingServiceMock.truncateMessageInRiskyWay(incomingMessage))
+        .thenThrow(ProcessingFatalException.class);
+
+    // WHEN-THEN
+    kafkaTemplate.send(kafkaProperties.getMainTopic(), incomingMessage);
+
+    waitAndVerifyDlqRecord(incomingMessage);
+
+    verify(processingServiceMock, times(1))
         .truncateMessageInRiskyWay(incomingMessage);
   }
 
