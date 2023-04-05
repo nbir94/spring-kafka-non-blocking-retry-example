@@ -12,8 +12,12 @@ public class KafkaTestMessages {
       + "message from DLQ topic";
   public static final String MESSAGE_FROM_RETRY_TOPIC_WAS_EXPECTED = "It's expected to receive a "
       + "message from retry topic";
-  public static final String RECORD_VALUE_SHOULD_CONTAIN_SENT_MESSAGE = "Kafka record value for"
+  public static final String RECORD_VALUE_SHOULD_CONTAIN_SENT_MESSAGE = "Kafka record value for "
       + "all topics (main, retry, DLQ) should be equal to the message that was sent";
   public static final String RETRY_DLQ_TEST_LISTENER_RECEIVED_A_RECORD = "Retry & DLQ Test "
       + "Listener received a record (topic = {}, partition = {}, offset = {}): '{}'";
+  public static final String RECORD_HEADER_SHOULD_BE_SPECIFIED = "Header %s should be specified "
+      + "for the retry / DLQ record";
+  public static final String RECORD_HEADER_VALUE_MUST_BE_EQUAL_TO = "Value of header '%s' for "
+      + "the retry / DLQ record must be equal to: %s";
 }

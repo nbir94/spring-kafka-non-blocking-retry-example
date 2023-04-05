@@ -5,7 +5,7 @@ package com.enbirr.springkafkaretry.exception;
  */
 public class ProcessingFatalException extends ProcessingException {
 
-  public ProcessingFatalException(String message) {
-    super(message);
+  public ProcessingFatalException(String message, Throwable cause) {
+    super(message, cause);
   }
 }

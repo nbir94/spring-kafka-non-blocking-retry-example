@@ -1,6 +1,7 @@
 package com.enbirr.springkafkaretry.service;
 
 import static com.enbirr.springkafkaretry.constants.LogAndExceptionMessages.FATAL_PROCESSING_ERROR_NOT_RETRIABLE;
+import static com.enbirr.springkafkaretry.constants.LogAndExceptionMessages.PROCESSING_ERROR_CAUSE;
 import static com.enbirr.springkafkaretry.constants.LogAndExceptionMessages.PROCESSING_ERROR_COULD_BE_RETRIED;
 
 import com.enbirr.springkafkaretry.exception.ProcessingException;
@@ -26,14 +27,25 @@ public class ProcessingService {
 
   public String truncateMessageInRiskyWay(String message) throws ProcessingException {
     int chanceOfSuccess = RANDOM.nextInt(1, 101);
+    maybeRunIntoTheFatalException(chanceOfSuccess);
+    maybeRunIntoRetryableException(chanceOfSuccess);
+    return truncateMessage(message, messageMaxLength);
+  }
 
-    if (chanceOfSuccess <= fatalErrorPercentage) {
-      throw new ProcessingFatalException(FATAL_PROCESSING_ERROR_NOT_RETRIABLE);
-    }
+  private void maybeRunIntoRetryableException(int chanceOfSuccess) {
     if (chanceOfSuccess <= errorPercentage) {
       throw new ProcessingException(PROCESSING_ERROR_COULD_BE_RETRIED);
     }
-    return truncateMessage(message, messageMaxLength);
+  }
+
+  private void maybeRunIntoTheFatalException(int chanceOfSuccess) {
+    if (chanceOfSuccess <= fatalErrorPercentage) {
+      try {
+        throw new ProcessingException(PROCESSING_ERROR_CAUSE);
+      } catch (ProcessingException cause) {
+        throw new ProcessingFatalException(FATAL_PROCESSING_ERROR_NOT_RETRIABLE, cause);
+      }
+    }
   }
 
   private static String truncateMessage(String message, int messageMaxLength) {
