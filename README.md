@@ -1,6 +1,10 @@
 # Spring Kafka non-blocking-retry (example)
 
 An example of a Spring Boot Kafka consumer application with non-blocking retry.
+- Java 17 
+- Spring Framework 6.0
+- Spring Boot 3.0
+- Spring Kafka 3.0.4
 ## Table of Contents
 - [The main logic](#the-main-logic)
 - [Manual testing](#manual-testing)
@@ -51,14 +55,14 @@ sh manualTesting/produce-message.sh
 - **In this example, we use only one retry topic.** By default, if we want application to make **N** retries (N > 0) using a retry topic, Spring creates N topics: 1 topic per a retry. This is not bad, but on some projects the regulations are aimed at a minimum topics count.
 - **This example shows how to set up your own retry and DLQ topic names.** By default, Spring uses "-retry" and "-dlt" suffixes for the retry and DLQ topics. It can break naming rules for some projects, which don't use dash symbol in names.
 - This example demonstrates **how to set up informative Kafka record headers for a retry and DLQ topics**. By default, Springs wraps any exception going from @KafkaListener method into the ListenerExecutionFailedException. It is used in the internal Spring logic. But information from this exception in the Kafka headers **doesn't clarify the occurred problem at all.**
+- You can find all above-mentioned settings for retry logic in the class [KafkaRetryDlqConfiguration.java](src%2Fmain%2Fjava%2Fcom%2Fenbirr%2Fspringkafkaretry%2Fconfiguration%2FKafkaRetryDlqConfiguration.java)
 ## Integration tests
-- Integration tests for Kafka logic use almost the same configuration as a real-time running application would have. 
-- These tests are running rather quickly. Because they create only the context that is necessary for testing Kafka functionality.
+- Just like a real-time running application, these tests use the [KafkaAutoConfiguration](https://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/autoconfigure/kafka/KafkaAutoConfiguration.html) to create the context for the kafka logic. **It makes tests more realistic and relieves from the need to manually create the objects necessary for Kafka consumer** (e.g. ConsumerFactory, ProducerFactory)
+- These tests are running rather quickly. Unlike the case of using @SpringBootTest annotation, they create only the context that is necessary for testing Kafka functionality (see [KafkaTestConfiguration.java](src%2Ftest%2Fjava%2Fcom%2Fenbirr%2Fspringkafkaretry%2Fconfiguration%2FKafkaTestConfiguration.java)). 
 - Dependencies used in tests:
-  - **JUnit5** 
-  - **Mockito**
-  - **Testcontainers** (to launch Kafka broker in Docker container)
-  - **Spring Aspects** (to catch a moment when Kafka consumer has processed the message)
+  - **JUnit5 & Mockito** (see [KafkaConsumerIntegrationTest.java](src%2Ftest%2Fjava%2Fcom%2Fenbirr%2Fspringkafkaretry%2Fconsumer%2FKafkaConsumerIntegrationTest.java))
+  - **Testcontainers** – to launch Kafka broker in a Docker container (see [KafkaTestConfiguration.java](src%2Ftest%2Fjava%2Fcom%2Fenbirr%2Fspringkafkaretry%2Fconfiguration%2FKafkaTestConfiguration.java))
+  - **Spring Aspects** – to catch a moment when Kafka consumer has processed the message (see [KafkaConsumerAspect.java](src%2Ftest%2Fjava%2Fcom%2Fenbirr%2Fspringkafkaretry%2Fconsumer%2FKafkaConsumerAspect.java))
 
 You can run these tests by executing the next command:
 ```shell

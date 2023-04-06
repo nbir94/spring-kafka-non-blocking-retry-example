@@ -20,6 +20,7 @@
     <java.version>17</java.version>
     <testcontainers.version>1.17.6</testcontainers.version>
     <commons-lang3.version>3.12.0</commons-lang3.version>
+    <spring-kafka.version>3.0.4</spring-kafka.version>
   </properties>
 
   <dependencies>
@@ -30,7 +31,7 @@
     <dependency>
       <groupId>org.springframework.kafka</groupId>
       <artifactId>spring-kafka</artifactId>
-      <version>3.0.4</version>
+      <version>${spring-kafka.version}</version>
     </dependency>
 
     <dependency>
